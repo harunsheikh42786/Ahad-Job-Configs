@@ -1,2 +1,10 @@
 server:
   port: 8083
+
+spring:
+  datasource:
+    hikari:
+      max-lifetime: 1800000
+      idle-timeout: 300000
+      keepalive-time: 300000
+      connection-timeout: 30000
