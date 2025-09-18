@@ -6,6 +6,9 @@ spring:
     url: jdbc:mysql://localhost:3306/ahad_job_portal?useSSL=false&serverTimezone=UTC
     username: root
     password: Harun@786
+    spring:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+
   jpa:
     hibernate:
       ddl-auto: update
