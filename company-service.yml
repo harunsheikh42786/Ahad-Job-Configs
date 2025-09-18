@@ -1,7 +1,2 @@
 server:
   port: 8082
-
-  jpa:
-    hibernate:
-      ddl-auto: update
-    show-sql: true
