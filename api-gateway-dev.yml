@@ -1,0 +1,46 @@
+server:
+  port: 8080
+spring:
+  cloud:
+    gateway:
+      server:
+        webmvc:
+          routes:
+            - id: USER-SERVICE
+              uri: lb://USER-SERVICE
+              predicates:
+                - Path=/api/v1/users/**
+
+            - id: COMPANY-SERVICE
+              uri: lb://COMPANY-SERVICE
+              predicates:
+                - Path=/api/v1/companies/**
+
+            - id: JOB-SERVICE
+              uri: lb://JOB-SERVICE
+              predicates:
+                - Path=/api/v1/jobs/**
+
+            - id: NOTIFICATION-SERVICE
+              uri: lb://NOTIFICATION-SERVICE
+              predicates:
+                - Path=/api/v1/notifications/**
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,metrics,gateway
+      base-path: /actuator
+  endpoint:
+    health:
+      show-details: when_authorized
+  info:
+    env:
+      enabled: true
+
+info:
+  app:
+    name: API-GATEWAY
+    version: 1.0.0
+    description: Production config - limited actuator endpoints exposed
