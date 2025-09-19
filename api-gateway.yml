@@ -1,3 +1,4 @@
+
 spring:
   cloud:
     gateway:
@@ -23,3 +24,12 @@ spring:
               uri: lb://NOTIFICATION-SERVICE
               predicates:
                 - Path=/api/v1/notifications/**
+management:
+  endpoints:
+    web:
+      exposure:
+        include: "*"
+  endpoint:
+    health:
+      show-details: always
+
