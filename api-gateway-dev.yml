@@ -24,3 +24,8 @@ management:
     web:
       exposure:
         include: "*"
+info:
+  app:
+    name: API-GATEWAY
+    version: 1.0.0
+    description: Development config - all actuator endpoints exposed
