@@ -3,41 +3,43 @@ server:
 spring:
   cloud:
     gateway:
-      routes:
-        - id: USER-SERVICE
-          uri: lb://USER-SERVICE
-          predicates:
-            - Path=/api/v1/users/**
-            - Path=/api/v1/job-history/**
-            - Path=/api/v1/user-info/**
-            - Path=/api/v1/achievements/**
-            - Path=/api/v1/addresses/**
-            - Path=/api/v1/educations/**
-          filters:
-            - RewritePath=/api/v1/(?<remaining>.*), /$\{remaining}
-
-        - id: COMPANY-SERVICE
-          uri: lb://COMPANY-SERVICE
-          predicates:
-            - Path=/api/v1/companies/**
-            - Path=/api/v1/company-addresses/**
-            - Path=/api/v1/company-information/**
-          filters:
-            - RewritePath=/api/v1/(?<remaining>.*), /$\{remaining}
-
-        - id: JOB-SERVICE
-          uri: lb://JOB-SERVICE
-          predicates:
-            - Path=/api/v1/jobs/**
-          filters:
-            - RewritePath=/api/v1/(?<remaining>.*), /$\{remaining}
-
-        - id: NOTIFICATION-SERVICE
-          uri: lb://NOTIFICATION-SERVICE
-          predicates:
-            - Path=/api/v1/notifications/**
-          filters:
-            - RewritePath=/api/v1/(?<remaining>.*), /$\{remaining}
+      server:
+        webmvc:
+          routes:
+            - id: USER-SERVICE
+              uri: lb://USER-SERVICE
+              predicates:
+                - Path=/api/v1/users/**
+                - Path=/api/v1/job-history/**
+                - Path=/api/v1/user-info/**
+                - Path=/api/v1/achievements/**
+                - Path=/api/v1/addresses/**
+                - Path=/api/v1/educations/**
+              filters:
+                - RewritePath=/api/v1/(?<remaining>.*), /$\{remaining}
+    
+            - id: COMPANY-SERVICE
+              uri: lb://COMPANY-SERVICE
+              predicates:
+                - Path=/api/v1/companies/**
+                - Path=/api/v1/company-addresses/**
+                - Path=/api/v1/company-information/**
+              filters:
+                - RewritePath=/api/v1/(?<remaining>.*), /$\{remaining}
+    
+            - id: JOB-SERVICE
+              uri: lb://JOB-SERVICE
+              predicates:
+                - Path=/api/v1/jobs/**
+              filters:
+                - RewritePath=/api/v1/(?<remaining>.*), /$\{remaining}
+    
+            - id: NOTIFICATION-SERVICE
+              uri: lb://NOTIFICATION-SERVICE
+              predicates:
+                - Path=/api/v1/notifications/**
+              filters:
+                - RewritePath=/api/v1/(?<remaining>.*), /$\{remaining}
 
 management:
   endpoints:
