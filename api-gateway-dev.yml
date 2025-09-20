@@ -8,10 +8,17 @@ spring:
           uri: lb://USER-SERVICE
           predicates:
             - Path=/api/v1/users/**
+            - Path=/api/v1/job-history/**
+            - Path=/api/v1/user-info/**
+            - Path=/api/v1/achievements/**
+            - Path=/api/v1/addresses/**
+            - Path=/api/v1/educations/**
         - id: COMPANY-SERVICE
           uri: lb://COMPANY-SERVICE
           predicates:
             - Path=/api/v1/companies/**
+            - Path=/api/v1/company-addresses/**
+            - Path=/api/v1/company-information/**
         - id: JOB-SERVICE
           uri: lb://JOB-SERVICE
           predicates:
