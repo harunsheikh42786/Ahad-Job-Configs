@@ -56,4 +56,11 @@ retry:
     companyServiceCB:
       max-attempts: 3
       wait-duration: 5s
+
+reatelimiter:
+  instances:
+    companyServiceRateLimiter:
+      limit-refresh-period: 4s
+      limit-for-period: 2
+      timeout-duration: 0s
       
