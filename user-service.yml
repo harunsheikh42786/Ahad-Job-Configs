@@ -57,7 +57,7 @@ retry:
       max-attempts: 3
       wait-duration: 5s
 
-reatelimiter:
+ratelimiter:
   instances:
     companyServiceRateLimiter:
       limit-refresh-period: 4s
