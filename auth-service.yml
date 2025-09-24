@@ -1,0 +1,17 @@
+server:
+  port: 8085   # Auth-Service ka port
+
+spring:
+  application:
+    name: AUTH-SERVICE
+
+# JWT secret & expiration (in seconds)
+jwt:
+  secret: mysecretkey123456
+  expiration: 3600   # 1 hour
+
+# Logging level (optional)
+logging:
+  level:
+    root: INFO
+    com.ahad.auth: DEBUG
