@@ -8,7 +8,10 @@ spring:
         - id: AUTH-SERVICE
           uri: lb://AUTH-SERVICE
           predicates:
-            - Path=/api/v1/auth/**   # public endpoints (login, register)
+            - Path=/api/v1/auth/**
+          filters:
+            - RewritePath=/api/v1/(?<remaining>.*), /${remaining}
+          # ⚡ No AuthenticationFilter yaha, kyunki ye public hai
 
         - id: USER-SERVICE
           uri: lb://USER-SERVICE
@@ -21,7 +24,7 @@ spring:
             - Path=/api/v1/educations/**
           filters:
             - RewritePath=/api/v1/(?<remaining>.*), /${remaining}
-            - name: AuthenticationFilter   # ✅ JWT filter add kiya
+            - name: AuthenticationFilter   # ✅ JWT lagana yaha
 
         - id: COMPANY-SERVICE
           uri: lb://COMPANY-SERVICE
