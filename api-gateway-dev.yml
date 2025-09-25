@@ -5,52 +5,65 @@ spring:
   cloud:
     gateway:
       routes:
+        # ✅ AUTH SERVICE - Public
         - id: AUTH-SERVICE
           uri: lb://AUTH-SERVICE
           predicates:
             - Path=/api/v1/auth/**
           filters:
             - RewritePath=/api/v1/(?<remaining>.*), /${remaining}
-          # ⚡ No AuthenticationFilter yaha, kyunki ye public hai
 
-        - id: USER-SERVICE
+        # ✅ USER SERVICE - Mixed (Some public, some secure)
+        - id: USER-SERVICE-PUBLIC
           uri: lb://USER-SERVICE
           predicates:
-            - Path=/api/v1/users/**
-            - Path=/api/v1/job-history/**
-            - Path=/api/v1/user-info/**
-            - Path=/api/v1/achievements/**
-            - Path=/api/v1/addresses/**
-            - Path=/api/v1/educations/**
+            - Path=/api/v1/register/user/**
           filters:
             - RewritePath=/api/v1/(?<remaining>.*), /${remaining}
-            - name: AuthenticationFilter   # ✅ JWT lagana yaha
+          # ⚡ No AuthenticationFilter - Public registration
 
-        - id: COMPANY-SERVICE
+        - id: USER-SERVICE-SECURE
+          uri: lb://USER-SERVICE
+          predicates:
+            - Path=/api/v1/users/**, /api/v1/job-history/**, /api/v1/user-info/**, /api/v1/achievements/**, /api/v1/addresses/**, /api/v1/educations/**
+          filters:
+            - RewritePath=/api/v1/(?<remaining>.*), /${remaining}
+            - name: JwtAuthenticationFilter   # ✅ Custom filter name
+
+        # ✅ COMPANY SERVICE - Mixed
+        - id: COMPANY-SERVICE-PUBLIC
           uri: lb://COMPANY-SERVICE
           predicates:
-            - Path=/api/v1/companies/**
-            - Path=/api/v1/company-addresses/**
-            - Path=/api/v1/company-information/**
+            - Path=/api/v1/register/company/**
           filters:
             - RewritePath=/api/v1/(?<remaining>.*), /${remaining}
-            - name: AuthenticationFilter
+          # ⚡ No AuthenticationFilter - Public registration
 
+        - id: COMPANY-SERVICE-SECURE
+          uri: lb://COMPANY-SERVICE
+          predicates:
+            - Path=/api/v1/companies/**, /api/v1/company-addresses/**, /api/v1/company-information/**
+          filters:
+            - RewritePath=/api/v1/(?<remaining>.*), /${remaining}
+            - name: JwtAuthenticationFilter
+
+        # ✅ JOB SERVICE - Secure
         - id: JOB-SERVICE
           uri: lb://JOB-SERVICE
           predicates:
             - Path=/api/v1/jobs/**
           filters:
             - RewritePath=/api/v1/(?<remaining>.*), /${remaining}
-            - name: AuthenticationFilter
+            - name: JwtAuthenticationFilter
 
+        # ✅ NOTIFICATION SERVICE - Secure
         - id: NOTIFICATION-SERVICE
           uri: lb://NOTIFICATION-SERVICE
           predicates:
             - Path=/api/v1/notifications/**
           filters:
             - RewritePath=/api/v1/(?<remaining>.*), /${remaining}
-            - name: AuthenticationFilter
+            - name: JwtAuthenticationFilter
 
 management:
   endpoints:
