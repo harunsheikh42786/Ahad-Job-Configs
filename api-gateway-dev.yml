@@ -1,38 +1,63 @@
-# API-GATEWAY application.yml
 server:
   port: 8080
 
 spring:
+  application:
+    name: API-GATEWAY
   cloud:
     gateway:
       routes:
+        # AUTH-SERVICE - Public routes
         - id: AUTH-SERVICE
           uri: lb://AUTH-SERVICE
           predicates:
-            - Path=/api/v1/auth/**
+            - Path=/api/v1/auth/**, /authenticate
           filters:
-            - RewritePath=/api/v1/(?<remaining>.*), /${remaining}
+            - RewritePath=/api/v1/(?<remaining>.*), /$\{remaining}
 
+        # USER-SERVICE routes
         - id: USER-SERVICE
           uri: lb://USER-SERVICE
           predicates:
-            - Path=/api/v1/users/**, /api/v1/register/user/**
+            - Path=/api/v1/users/**, /api/v1/user-info/**, /api/v1/educations/**, /api/v1/achievements/**, /api/v1/job-history/**
           filters:
-            - RewritePath=/api/v1/(?<remaining>.*), /${remaining}
+            - RewritePath=/api/v1/(?<remaining>.*), /$\{remaining}
 
+        # COMPANY-SERVICE routes
         - id: COMPANY-SERVICE
           uri: lb://COMPANY-SERVICE
           predicates:
-            - Path=/api/v1/companies/**, /api/v1/register/company/**
+            - Path=/api/v1/companies/**, /api/v1/company-information/**, /api/v1/company-addresses/**
           filters:
-            - RewritePath=/api/v1/(?<remaining>.*), /${remaining}
+            - RewritePath=/api/v1/(?<remaining>.*), /$\{remaining}
 
+        # JOB-SERVICE routes
         - id: JOB-SERVICE
           uri: lb://JOB-SERVICE
           predicates:
             - Path=/api/v1/jobs/**
           filters:
-            - RewritePath=/api/v1/(?<remaining>.*), /${remaining}
+            - RewritePath=/api/v1/(?<remaining>.*), /$\{remaining}
+
+        # Registration endpoints (public)
+        - id: REGISTRATION-SERVICE
+          uri: lb://USER-SERVICE  # or COMPANY-SERVICE depending on your setup
+          predicates:
+            - Path=/api/v1/register/user/**
+          filters:
+            - RewritePath=/api/v1/register/user/(?<remaining>.*), /api/v1/$\{remaining}
+
+        - id: COMPANY-REGISTRATION-SERVICE
+          uri: lb://COMPANY-SERVICE
+          predicates:
+            - Path=/api/v1/register/company/**
+          filters:
+            - RewritePath=/api/v1/register/company/(?<remaining>.*), /api/v1/$\{remaining}
+
+eureka:
+  client:
+    service-url:
+      defaultZone: http://localhost:8761/eureka
 
 management:
   endpoints:
@@ -44,4 +69,3 @@ info:
   app:
     name: API-GATEWAY
     version: 1.0.0
-    description: Development config - all actuator endpoints exposed
