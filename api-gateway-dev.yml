@@ -1,6 +1,3 @@
-server:
-  port: 8080
-
 spring:
   application:
     name: API-GATEWAY
@@ -11,16 +8,13 @@ spring:
         - id: AUTH-SERVICE
           uri: lb://AUTH-SERVICE
           predicates:
-            - Path=/api/v1/auth/**, /authenticate
-          # filters:
-          #   - RewritePath=/api/v1/(?<remaining>.*), /$\{remaining}
+            - Path=/api/v1/auth/**|/authenticate
 
         # USER-SERVICE routes
         - id: USER-SERVICE
           uri: lb://USER-SERVICE
-          # uri: http://localhost:8083
           predicates:
-            - Path=/api/v1/users/**, /api/v1/user-info/**, /api/v1/educations/**, /api/v1/achievements/**, /api/v1/job-history/**, /api/v1/register/user/**
+            - Path=/api/v1/users/**|/api/v1/user-info/**|/api/v1/educations/**|/api/v1/achievements/**|/api/v1/job-history/**|/api/v1/register/user/**
           # filters:
           #   - RewritePath=/api/v1/(?<remaining>.*), /$\{remaining}
 
@@ -28,7 +22,7 @@ spring:
         - id: COMPANY-SERVICE
           uri: lb://COMPANY-SERVICE
           predicates:
-            - Path=/api/v1/companies/**, /api/v1/company-information/**, /api/v1/company-addresses/**, /api/v1/register/company/**
+            - Path=/api/v1/companies/**|/api/v1/company-information/**|/api/v1/company-addresses/**|/api/v1/register/company/**
           # filters:
           #   - RewritePath=/api/v1/(?<remaining>.*), /$\{remaining}
 
@@ -40,12 +34,14 @@ spring:
           # filters:
           #   - RewritePath=/api/v1/(?<remaining>.*), /$\{remaining}
 
+        # COMPANY-REGISTRATION-SERVICE
         - id: COMPANY-REGISTRATION-SERVICE
           uri: lb://COMPANY-SERVICE
           predicates:
             - Path=/api/v1/register/company/**
           # filters:
           #   - RewritePath=/api/v1/register/company/(?<remaining>.*), /api/v1/$\{remaining}
+
 
 eureka:
   client:
