@@ -39,14 +39,6 @@ spring:
           filters:
             - RewritePath=/api/v1/(?<remaining>.*), /$\{remaining}
 
-        # Registration endpoints (public)
-        - id: REGISTRATION-SERVICE
-          uri: lb://USER-SERVICE  # or COMPANY-SERVICE depending on your setup
-          predicates:
-            - Path=/api/v1/register/user/**
-          filters:
-            - RewritePath=/api/v1/register/user/(?<remaining>.*), /api/v1/$\{remaining}
-
         - id: COMPANY-REGISTRATION-SERVICE
           uri: lb://COMPANY-SERVICE
           predicates:
