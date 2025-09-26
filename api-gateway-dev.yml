@@ -27,7 +27,7 @@ spring:
         - id: COMPANY-SERVICE
           uri: lb://COMPANY-SERVICE
           predicates:
-            - Path=/api/v1/companies/**, /api/v1/company-information/**, /api/v1/company-addresses/**, /api/v1/register/user/**
+            - Path=/api/v1/companies/**, /api/v1/company-information/**, /api/v1/company-addresses/**, /api/v1/register/company/**
           filters:
             - RewritePath=/api/v1/(?<remaining>.*), /$\{remaining}
 
