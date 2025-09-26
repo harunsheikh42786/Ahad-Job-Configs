@@ -18,6 +18,7 @@ spring:
         # USER-SERVICE routes
         - id: USER-SERVICE
           uri: lb://USER-SERVICE
+          uri: http://localhost:8083
           predicates:
             - Path=/api/v1/users/**, /api/v1/user-info/**, /api/v1/educations/**, /api/v1/achievements/**, /api/v1/job-history/**, /api/v1/register/user/**
           # filters:
