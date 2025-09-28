@@ -4,45 +4,10 @@ spring:
   cloud:
     gateway:
       routes:
-
-        # AUTH-SERVICE - Public routes
-        # - id: AUTH-SERVICE
-        #   uri: lb://AUTH-SERVICE
-        #   predicates:
-        #     - Path=/api/v1/auth/**
-        #     - Path=/authenticate
-
-        # USER-SERVICE routes
         - id: USER-SERVICE
           uri: lb://USER-SERVICE
           predicates:
-            - Path=/api/v1/users/**
-            - Path=/api/v1/register/user
-            - Path=/api/v1/user-info/**
-            - Path=/api/v1/educations/**
-            - Path=/api/v1/achievements/**
-            - Path=/api/v1/job-history/**
-
-        # COMPANY-SERVICE routes
-        # - id: COMPANY-SERVICE
-        #   uri: lb://COMPANY-SERVICE
-        #   predicates:
-        #     - Path=/api/v1/companies/**
-        #     - Path=/api/v1/company-information/**
-        #     - Path=/api/v1/company-addresses/**
-
-        # # JOB-SERVICE routes
-        # - id: JOB-SERVICE
-        #   uri: lb://JOB-SERVICE
-        #   predicates:
-        #     - Path=/api/v1/jobs/**
-
-        # # COMPANY-REGISTRATION-SERVICE routes
-        # - id: COMPANY-REGISTRATION-SERVICE
-        #   uri: lb://COMPANY-SERVICE
-        #   predicates:
-        #     - Path=/api/v1/register/company/**
-
+            - Path=/api/v1/**
 eureka:
   client:
     service-url:
