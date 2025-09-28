@@ -4,47 +4,36 @@ spring:
   cloud:
     gateway:
       routes:
-        # # AUTH-SERVICE - Public routes
-        # - id: AUTH-SERVICE
-        #   uri: lb://AUTH-SERVICE
-        #   predicates:
-        #     - Path=/api/v1/auth/**|/authenticate
+
+        # AUTH-SERVICE - Public routes
+        - id: AUTH-SERVICE
+          uri: lb://AUTH-SERVICE
+          predicates:
+            - Path=/api/v1/auth/**,/authenticate
 
         # USER-SERVICE routes
         - id: USER-SERVICE
           uri: lb://USER-SERVICE
           predicates:
-            - Path=/api/v1/users/**
-            - Path=/api/v1/register/user
+            - Path=/api/v1/users/**,/api/v1/register/user,/api/v1/user-info/**,/api/v1/educations/**,/api/v1/achievements/**,/api/v1/job-history/**
 
-        #     - Path=/api/v1/users/**|/api/v1/user-info/**|/api/v1/educations/**|/api/v1/achievements/**|/api/v1/job-history/**|/api/v1/register/user/**
-        #   # filters:
-        #   #   - RewritePath=/api/v1/(?<remaining>.*), /$\{remaining}
+        # COMPANY-SERVICE routes
+        - id: COMPANY-SERVICE
+          uri: lb://COMPANY-SERVICE
+          predicates:
+            - Path=/api/v1/companies/**,/api/v1/company-information/**,/api/v1/company-addresses/**
 
-        # # COMPANY-SERVICE routes
-        # - id: COMPANY-SERVICE
-        #   uri: lb://COMPANY-SERVICE
-        #   predicates:
-        #     - Path=/api/v1/companies/**|/api/v1/company-information/**|/api/v1/company-addresses/**|/api/v1/register/company/**
-        #   # filters:
-        #   #   - RewritePath=/api/v1/(?<remaining>.*), /$\{remaining}
+        # JOB-SERVICE routes
+        - id: JOB-SERVICE
+          uri: lb://JOB-SERVICE
+          predicates:
+            - Path=/api/v1/jobs/**
 
-        # # JOB-SERVICE routes
-        # - id: JOB-SERVICE
-        #   uri: lb://JOB-SERVICE
-        #   predicates:
-        #     - Path=/api/v1/jobs/**
-        #   # filters:
-        #   #   - RewritePath=/api/v1/(?<remaining>.*), /$\{remaining}
-
-        # # COMPANY-REGISTRATION-SERVICE
-        # - id: COMPANY-REGISTRATION-SERVICE
-        #   uri: lb://COMPANY-SERVICE
-        #   predicates:
-        #     - Path=/api/v1/register/company/**
-        #   # filters:
-        #   #   - RewritePath=/api/v1/register/company/(?<remaining>.*), /api/v1/$\{remaining}
-
+        # COMPANY-REGISTRATION-SERVICE
+        - id: COMPANY-REGISTRATION-SERVICE
+          uri: lb://COMPANY-SERVICE
+          predicates:
+            - Path=/api/v1/register/company/**
 
 eureka:
   client:
