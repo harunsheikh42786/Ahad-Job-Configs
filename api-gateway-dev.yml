@@ -6,20 +6,37 @@ spring:
       server:
         webflux:
           routes:
+            
+            # AUTH-SERVICE routes
+            - id: AUTH-SERVICE
+              uri: lb://AUTH-SERVICE
+              predicates:
+                - Path=/api/v1/auth/**,/authenticate,/api/v1/register/**
+
+            # USER-SERVICE routes
             - id: USER-SERVICE
               uri: lb://USER-SERVICE
               predicates:
-                - Path=/api/v1/users/**,/api/v1/register/user,/api/v1/user-info/**,/api/v1/educations/**,/api/v1/achievements/**,/api/v1/job-history/**
+                - Path=/api/v1/users/**,/api/v1/user-info/**,/api/v1/educations/**,/api/v1/achievements/**,/api/v1/job-history/**
 
-# Alternative: You can also use this shorter version
-# spring:
-#   cloud:
-#     gateway:
-#       routes:
-#         - id: USER-SERVICE
-#           uri: lb://USER-SERVICE
-#           predicates:
-#             - Path=/api/v1/users/**,/api/v1/register/user,/api/v1/user-info/**,/api/v1/educations/**,/api/v1/achievements/**,/api/v1/job-history/**
+            # COMPANY-SERVICE routes
+            - id: COMPANY-SERVICE
+              uri: lb://COMPANY-SERVICE
+              predicates:
+                - Path=/api/v1/companies/**,/api/v1/company-information/**,/api/v1/company-addresses/**,/api/v1/register/company/**
+
+            # JOB-SERVICE routes
+            - id: JOB-SERVICE
+              uri: lb://JOB-SERVICE
+              predicates:
+                - Path=/api/v1/jobs/**,/api/v1/applications/**,/api/v1/categories/**
+
+            # NOTIFICATION-SERVICE routes
+            - id: NOTIFICATION-SERVICE
+              uri: lb://NOTIFICATION-SERVICE
+              predicates:
+                - Path=/api/v1/notifications/**,/api/v1/emails/**,/api/v1/alerts/**
+
 eureka:
   client:
     service-url:
@@ -35,9 +52,8 @@ management:
 
 logging:
   level:
-    org.springframework.cloud.gateway: TRACE
+    org.springframework.cloud.gateway: DEBUG
     org.springframework.web: DEBUG
-    reactor.netty: DEBUG
 
 info:
   app:
