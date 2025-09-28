@@ -33,6 +33,12 @@ management:
       exposure:
         include: "*"
 
+logging:
+  level:
+    org.springframework.cloud.gateway: TRACE
+    org.springframework.web: DEBUG
+    reactor.netty: DEBUG
+
 info:
   app:
     name: API-GATEWAY
