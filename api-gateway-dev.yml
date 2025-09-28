@@ -6,10 +6,10 @@ spring:
       routes:
 
         # AUTH-SERVICE - Public routes
-        - id: AUTH-SERVICE
-          uri: lb://AUTH-SERVICE
-          predicates:
-            - Path=/api/v1/auth/**,/authenticate
+        # - id: AUTH-SERVICE
+        #   uri: lb://AUTH-SERVICE
+        #   predicates:
+        #     - Path=/api/v1/auth/**,/authenticate
 
         # USER-SERVICE routes
         - id: USER-SERVICE
@@ -18,22 +18,22 @@ spring:
             - Path=/api/v1/users/**,/api/v1/register/user,/api/v1/user-info/**,/api/v1/educations/**,/api/v1/achievements/**,/api/v1/job-history/**
 
         # COMPANY-SERVICE routes
-        - id: COMPANY-SERVICE
-          uri: lb://COMPANY-SERVICE
-          predicates:
-            - Path=/api/v1/companies/**,/api/v1/company-information/**,/api/v1/company-addresses/**
+        # - id: COMPANY-SERVICE
+        #   uri: lb://COMPANY-SERVICE
+        #   predicates:
+        #     - Path=/api/v1/companies/**,/api/v1/company-information/**,/api/v1/company-addresses/**
 
-        # JOB-SERVICE routes
-        - id: JOB-SERVICE
-          uri: lb://JOB-SERVICE
-          predicates:
-            - Path=/api/v1/jobs/**
+        # # JOB-SERVICE routes
+        # - id: JOB-SERVICE
+        #   uri: lb://JOB-SERVICE
+        #   predicates:
+        #     - Path=/api/v1/jobs/**
 
-        # COMPANY-REGISTRATION-SERVICE
-        - id: COMPANY-REGISTRATION-SERVICE
-          uri: lb://COMPANY-SERVICE
-          predicates:
-            - Path=/api/v1/register/company/**
+        # # COMPANY-REGISTRATION-SERVICE
+        # - id: COMPANY-REGISTRATION-SERVICE
+        #   uri: lb://COMPANY-SERVICE
+        #   predicates:
+        #     - Path=/api/v1/register/company/**
 
 eureka:
   client:
