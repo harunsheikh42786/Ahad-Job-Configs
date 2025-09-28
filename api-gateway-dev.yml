@@ -3,11 +3,23 @@ spring:
     name: API-GATEWAY
   cloud:
     gateway:
-      routes:
-        - id: USER-SERVICE
-          uri: lb://USER-SERVICE
-          predicates:
-            - Path=/api/v1/**
+      server:
+        webflux:
+          routes:
+            - id: USER-SERVICE
+              uri: lb://USER-SERVICE
+              predicates:
+                - Path=/api/v1/users/**,/api/v1/register/user,/api/v1/user-info/**,/api/v1/educations/**,/api/v1/achievements/**,/api/v1/job-history/**
+
+# Alternative: You can also use this shorter version
+# spring:
+#   cloud:
+#     gateway:
+#       routes:
+#         - id: USER-SERVICE
+#           uri: lb://USER-SERVICE
+#           predicates:
+#             - Path=/api/v1/users/**,/api/v1/register/user,/api/v1/user-info/**,/api/v1/educations/**,/api/v1/achievements/**,/api/v1/job-history/**
 eureka:
   client:
     service-url:
