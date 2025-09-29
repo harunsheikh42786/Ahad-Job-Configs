@@ -1,85 +1,76 @@
-@Component
-public class JwtAuthenticationFilter implements GlobalFilter {
-    
-    @Autowired
-    private JwtUtil jwtUtil;
-    
-    @Override
-    public Mono<Void> filter(ServerWebExchange exchange, GatewayFilterChain chain) {
-        String path = exchange.getRequest().getURI().getPath();
-        String method = exchange.getRequest().getMethod().toString();
-        
-        // 1. PUBLIC ROUTES - No JWT check
-        if (isPublicRoute(path, method)) {
-            return chain.filter(exchange);
-        }
-        
-        // 2. PROTECTED ROUTES - JWT check required
-        String authHeader = exchange.getRequest().getHeaders().getFirst("Authorization");
-        
-        if (authHeader == null || !authHeader.startsWith("Bearer ")) {
-            return unauthorizedResponse(exchange, "Missing or invalid Authorization header");
-        }
-        
-        String token = authHeader.substring(7);
-        
-        if (!jwtUtil.validateToken(token)) {
-            return unauthorizedResponse(exchange, "Invalid or expired token");
-        }
-        
-        // Add user info to headers for downstream services
-        ServerHttpRequest mutatedRequest = addUserHeaders(exchange, token);
-        
-        return chain.filter(exchange.mutate().request(mutatedRequest).build());
-    }
-    
-    private boolean isPublicRoute(String path, String method) {
-        // Auth routes - always public
-        if (path.startsWith("/api/v1/auth/") || 
-            path.startsWith("/authenticate") ||
-            path.startsWith("/api/v1/register/")) {
-            return true;
-        }
-        
-        // Public job routes - GET methods only
-        if (path.startsWith("/api/v1/jobs/") && "GET".equals(method)) {
-            return true;
-        }
-        
-        // Public categories
-        if (path.startsWith("/api/v1/categories/") && "GET".equals(method)) {
-            return true;
-        }
-        
-        return false;
-    }
-    
-    private ServerHttpRequest addUserHeaders(ServerWebExchange exchange, String token) {
-        String accountType = jwtUtil.extractAccountType(token);
-        
-        ServerHttpRequest.Builder requestBuilder = exchange.getRequest().mutate()
-            .header("X-Account-Type", accountType);
-            
-        if ("USER".equals(accountType)) {
-            String userId = jwtUtil.extractUserId(token);
-            requestBuilder.header("X-User-Id", userId);
-        } else if ("COMPANY".equals(accountType)) {
-            String companyId = jwtUtil.extractCompanyId(token);
-            requestBuilder.header("X-Company-Id", companyId);
-        }
-        
-        return requestBuilder.build();
-    }
-    
-    private Mono<Void> unauthorizedResponse(ServerWebExchange exchange, String message) {
-        exchange.getResponse().setStatusCode(HttpStatus.UNAUTHORIZED);
-        exchange.getResponse().getHeaders().add("Content-Type", "application/json");
-        
-        String responseBody = "{\"error\": \"Unauthorized\", \"message\": \"" + message + "\"}";
-        
-        DataBuffer buffer = exchange.getResponse().bufferFactory()
-            .wrap(responseBody.getBytes(StandardCharsets.UTF_8));
-            
-        return exchange.getResponse().writeWith(Mono.just(buffer));
-    }
-}
+spring:
+  application:
+    name: API-GATEWAY
+  cloud:
+    gateway:
+      routes:
+        # AUTH-SERVICE routes - NO JWT CHECK
+        - id: AUTH-SERVICE
+          uri: lb://AUTH-SERVICE
+          predicates:
+            - Path=/api/v1/auth/**,/authenticate,/api/v1/register/**
+          filters:
+            - StripPrefix=0  # Original path forward karega
+
+        # USER-SERVICE routes - JWT PROTECTED
+        - id: USER-SERVICE
+          uri: lb://USER-SERVICE
+          predicates:
+            - Path=/api/v1/users/**,/api/v1/user-info/**,/api/v1/educations/**,/api/v1/achievements/**,/api/v1/job-history/**
+          filters:
+            - StripPrefix=1  # /api/v1 remove karega
+            - name: JwtAuthenticationFilter
+
+        # COMPANY-SERVICE routes - JWT PROTECTED  
+        - id: COMPANY-SERVICE
+          uri: lb://COMPANY-SERVICE
+          predicates:
+            - Path=/api/v1/companies/**,/api/v1/company-information/**,/api/v1/company-addresses/**
+          filters:
+            - StripPrefix=1
+            - name: JwtAuthenticationFilter
+
+        # JOB-SERVICE routes - MIXED (Some public, some protected)
+        - id: JOB-SERVICE
+          uri: lb://JOB-SERVICE
+          predicates:
+            - Path=/api/v1/jobs/**,/api/v1/applications/**,/api/v1/categories/**
+          filters:
+            - StripPrefix=1
+            - name: JwtAuthenticationFilter
+
+        # NOTIFICATION-SERVICE routes - JWT PROTECTED
+        - id: NOTIFICATION-SERVICE
+          uri: lb://NOTIFICATION-SERVICE
+          predicates:
+            - Path=/api/v1/notifications/**,/api/v1/emails/**,/api/v1/alerts/**
+          filters:
+            - StripPrefix=1
+            - name: JwtAuthenticationFilter
+
+# Eureka Configuration
+eureka:
+  client:
+    service-url:
+      defaultZone: http://localhost:8761/eureka
+    register-with-eureka: true
+    fetch-registry: true
+
+# Management endpoints
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,metrics
+
+# Logging
+logging:
+  level:
+    org.springframework.cloud.gateway: DEBUG
+    com.ahad.gateway.filter: DEBUG
+
+# App info
+info:
+  app:
+    name: API-GATEWAY
+    version: 1.0.0
