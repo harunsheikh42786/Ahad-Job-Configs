@@ -2,51 +2,53 @@ spring:
   application:
     name: API-GATEWAY
   cloud:
-    gateway:
-      routes:
-        # AUTH-SERVICE routes - NO JWT CHECK
-        - id: AUTH-SERVICE
-          uri: lb://AUTH-SERVICE
-          predicates:
-            - Path=/api/v1/auth/**,/authenticate,/api/v1/register/**
-          filters:
-            - StripPrefix=0  # Original path forward karega
-
-        # USER-SERVICE routes - JWT PROTECTED
-        - id: USER-SERVICE
-          uri: lb://USER-SERVICE
-          predicates:
-            - Path=/api/v1/users/**,/api/v1/user-info/**,/api/v1/educations/**,/api/v1/achievements/**,/api/v1/job-history/**
-          filters:
-            - StripPrefix=1  # /api/v1 remove karega
-            - name: JwtAuthenticationFilter
-
-        # COMPANY-SERVICE routes - JWT PROTECTED  
-        - id: COMPANY-SERVICE
-          uri: lb://COMPANY-SERVICE
-          predicates:
-            - Path=/api/v1/companies/**,/api/v1/company-information/**,/api/v1/company-addresses/**
-          filters:
-            - StripPrefix=1
-            - name: JwtAuthenticationFilter
-
-        # JOB-SERVICE routes - MIXED (Some public, some protected)
-        - id: JOB-SERVICE
-          uri: lb://JOB-SERVICE
-          predicates:
-            - Path=/api/v1/jobs/**,/api/v1/applications/**,/api/v1/categories/**
-          filters:
-            - StripPrefix=1
-            - name: JwtAuthenticationFilter
-
-        # NOTIFICATION-SERVICE routes - JWT PROTECTED
-        - id: NOTIFICATION-SERVICE
-          uri: lb://NOTIFICATION-SERVICE
-          predicates:
-            - Path=/api/v1/notifications/**,/api/v1/emails/**,/api/v1/alerts/**
-          filters:
-            - StripPrefix=1
-            - name: JwtAuthenticationFilter
+    server:
+      webflux:
+        gateway:
+          routes:
+            # AUTH-SERVICE routes - NO JWT CHECK
+            - id: AUTH-SERVICE
+              uri: lb://AUTH-SERVICE
+              predicates:
+                - Path=/api/v1/auth/**,/authenticate,/api/v1/register/**
+              filters:
+                - StripPrefix=0  # Original path forward karega
+    
+            # USER-SERVICE routes - JWT PROTECTED
+            - id: USER-SERVICE
+              uri: lb://USER-SERVICE
+              predicates:
+                - Path=/api/v1/users/**,/api/v1/user-info/**,/api/v1/educations/**,/api/v1/achievements/**,/api/v1/job-history/**
+              filters:
+                - StripPrefix=1  # /api/v1 remove karega
+                - name: JwtAuthenticationFilter
+    
+            # COMPANY-SERVICE routes - JWT PROTECTED  
+            - id: COMPANY-SERVICE
+              uri: lb://COMPANY-SERVICE
+              predicates:
+                - Path=/api/v1/companies/**,/api/v1/company-information/**,/api/v1/company-addresses/**
+              filters:
+                - StripPrefix=1
+                - name: JwtAuthenticationFilter
+    
+            # JOB-SERVICE routes - MIXED (Some public, some protected)
+            - id: JOB-SERVICE
+              uri: lb://JOB-SERVICE
+              predicates:
+                - Path=/api/v1/jobs/**,/api/v1/applications/**,/api/v1/categories/**
+              filters:
+                - StripPrefix=1
+                - name: JwtAuthenticationFilter
+    
+            # NOTIFICATION-SERVICE routes - JWT PROTECTED
+            - id: NOTIFICATION-SERVICE
+              uri: lb://NOTIFICATION-SERVICE
+              predicates:
+                - Path=/api/v1/notifications/**,/api/v1/emails/**,/api/v1/alerts/**
+              filters:
+                - StripPrefix=1
+                - name: JwtAuthenticationFilter
 
 # Eureka Configuration
 eureka:
